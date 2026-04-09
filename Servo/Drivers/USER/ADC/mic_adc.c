@@ -1,73 +1,14 @@
- 
- #include "stm32h7xx_hal.h"
- #include "adc.h"
- #include "main.h"
- #include "mic_adc.h"
- uint8_t   start_fft_flag=0;  //Æô¶¯fft¼ÆËã±êÖ¾£¬ start_fft_flag:1 Æô¶¯  0:Í£Ö¹
- 
- uint16_t adc_value_buffer[MAX_FFT_N]={0};
- 
- 
- // ADC1 Ñ¡ÓÃÍ¨µÀ3  : PA6  ÓÃÓÚ·ù¶ÈÅÐ¶Ï
- // ADC2 Ñ¡ÓÃÍ¨µÀ10 £ºPC0 ÓÃÓÚÊý¾Ý²É¼¯
- //
- //
- //
- //
- //HAL_ADC_Start_IT Æô¶¯ADCµÄ×ª»»
- 
- 
- //adcµ¥´Î×ª»»Íê³ÉµÄÖÐ¶Ïº¯Êý
- void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
- {
-   
-//		if(hadc->Instance==ADC2)
-//		{
-//       adc2_value = HAL_ADC_GetValue(&hadc2);
-//			 HAL_ADC_Stop_IT(&hadc2);
-//			// printf("%d \n",adc2_value);
-//		 }	
-      
-    //DMA´«ÊäÍê³ÉµÄÖÐ¶Ï»Øµ÷º¯Êý
-		if(hadc->Instance==ADC1)
-		{
-       HAL_ADC_Stop_DMA(&hadc1);
-			 start_fft_flag=1;
-			 //printf("HAL_ADC_ConvCpltCallback\n");
-		 }
-		 
- }
- 
- //HAL_ADC_ConvCpltCallback(hadc);
- /********************
- HAL_ADC_Start_DMA(ADC_HandleTypeDef* hadc, uint32_t* pData, uint32_t Length); ADCÆô¶¯DMA´«Êä
- HAL_ADCEx_Calibration_Start(&hadc1);
- 
-  // Set the DMA transfer complete callback 
-     //   hadc->DMA_Handle->XferCpltCallback = ADC_DMAConvCplt;
+ï»¿#include "stm32h7xx_hal.h"
+#include "adc.h"
+#include "mic_adc.h"
 
+volatile uint8_t start_fft_flag = 0U;
+volatile uint16_t adc_value_buffer[MAX_FFT_N] = {0};
 
- ADC1 DMA´«ÊäÍê³ÉÖÐ¶Ïº¯Êý
- void DMA1_Stream1_IRQHandler(void)
-{*/
-  /* USER CODE BEGIN DMA1_Stream1_IRQn 0 */
-
-  /* USER CODE END DMA1_Stream1_IRQn 0 */
- // HAL_DMA_IRQHandler(&hdma_adc1);
-  /* USER CODE BEGIN DMA1_Stream1_IRQn 1 */
- /*if(__HAL_DMA_GET_FLAG(&hdma_adc1,DMA_FLAG_TCIF1_5))//µÈ´ýDMA1_Steam0´«ÊäÍê³É
-	 {
-	 //´Ë´¦±àÐ´ÖÐ¶Ï³ÌÐò
-	 //Çå³ýÖÐ¶Ï
-		 a=0;
-	   __HAL_DMA_CLEAR_FLAG(&hdma_adc1,DMA_FLAG_TCIF1_5);//Çå³ýDMA1_Steam0´«ÊäÍê³É±êÖ¾ 
-		 HAL_ADC_Stop_DMA(&hadc2);
-	 }
-*/
-	
-	
-  /* USER CODE END DMA1_Stream1_IRQn 1 */
-//}***
-//************/
-
- 
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
+{
+    if (hadc->Instance == ADC1) {
+        HAL_ADC_Stop_DMA(&hadc1);
+        start_fft_flag = 1U;
+    }
+}

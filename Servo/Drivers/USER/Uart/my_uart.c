@@ -1,67 +1,20 @@
-/***********************
-Íê³ÉÓëPC¶Ë´®¿ÚÁ¬½Ó¼°Êı¾İÊÕ·¢
-¶Ë¿Ú²ÉÓÃUSART1:
-PB14     ------> USART1_TX
-PB15     ------> USART1_RX
+ï»¿#include "my_uart.h"
+#include <stdio.h>
 
-***********************/
-
-#include "my_uart.h"
-#include "stdio.h"
-#include <string.h>
-
-
-
-
-//uint8_t UART4_BufferFlag=Buffer_Ready;
-//uint8_t UART4_Rx_Buffer[128]={0};
-//uint8_t Rx_Buffer[128]={0};
-
-/***********************************
-
-
-
-*************************************/
-
-
-
-/********
-º¯Êı¹¦ÄÜ£ºÖØ¶¨ÏòC¿âº¯Êıprintfµ½USART1
-ÊäÈë²ÎÊı£ºÎŞ
-·µ»ØÖµ£ºch
-ËµÃ÷£ºÎŞ
-//****************/
-int fputc(int ch,FILE *f)
+int fputc(int ch, FILE *f)
 {
-  HAL_UART_Transmit(&huart1,(uint8_t*)&ch,1,0xffff);
-	return ch;
+    (void)f;
+    HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 0xFFFF);
+    return ch;
 }
 
-
-/********
-º¯Êı¹¦ÄÜ£ºÖØ¶¨ÏòC¿âº¯Êıgetchar,scanfµ½USART1
-ÊäÈë²ÎÊı£ºÎŞ
-·µ»ØÖµ£ºÎŞ
-ËµÃ÷£ºÎŞ
-****************/
 int fgetc(FILE *f)
 {
-	uint8_t ch=0;
-  while(HAL_UART_Receive(&huart1,&ch,1,0xffff)!=HAL_OK);
-	return ch;
+    uint8_t ch = 0;
+    (void)f;
+
+    while (HAL_UART_Receive(&huart1, &ch, 1, 0xFFFF) != HAL_OK) {
+    }
+
+    return ch;
 }
-
-/****
-ÔÚµÄDMAÄ£Ê½ÏÂ£¬Ê¹ÄÜDMA½ÓÊÕ£¬²¢½ÓÊÕÍêºó½øÈë¿ÕÏĞÖĞ¶Ïº¯Êı
-HAL_StatusTypeDef HAL_UARTEx_ReceiveToIdle_DMA(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Si
-¿ÕÏĞÖĞ¶ÏµÄ»Øµ÷º¯Êı
-__weak void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
-
-
-
-*****/
-
-
-
-
-

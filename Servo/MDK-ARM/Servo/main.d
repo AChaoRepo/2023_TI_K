@@ -7,7 +7,7 @@ servo\main.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_def.h
 servo\main.o: ../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h7xx.h
 servo\main.o: ../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h743xx.h
 servo\main.o: ../Drivers/CMSIS/Include/core_cm7.h
-servo\main.o: E:\keil5\ARM\ARMCC\Bin\..\include\stdint.h
+servo\main.o: D:\Professional_Software\Keil5_MDK\ARM\ARMCC\Bin\..\include\stdint.h
 servo\main.o: ../Drivers/CMSIS/Include/cmsis_version.h
 servo\main.o: ../Drivers/CMSIS/Include/cmsis_compiler.h
 servo\main.o: ../Drivers/CMSIS/Include/cmsis_armcc.h
@@ -15,8 +15,8 @@ servo\main.o: ../Drivers/CMSIS/Include/mpu_armv7.h
 servo\main.o: ../Drivers/CMSIS/Device/ST/STM32H7xx/Include/system_stm32h7xx.h
 servo\main.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h
 servo\main.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h
-servo\main.o: E:\keil5\ARM\ARMCC\Bin\..\include\stddef.h
-servo\main.o: E:\keil5\ARM\ARMCC\Bin\..\include\math.h
+servo\main.o: D:\Professional_Software\Keil5_MDK\ARM\ARMCC\Bin\..\include\stddef.h
+servo\main.o: D:\Professional_Software\Keil5_MDK\ARM\ARMCC\Bin\..\include\math.h
 servo\main.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc_ex.h
 servo\main.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_gpio.h
 servo\main.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_gpio_ex.h
@@ -53,9 +53,9 @@ servo\main.o: ../Drivers/USER/fft/fft_user.h
 servo\main.o: ../Drivers/USER/fft/FFTInc.h
 servo\main.o: ../Drivers/USER/DSP/Include/arm_math.h
 servo\main.o: ../Drivers/USER/DSP/Include/cmsis_compiler.h
-servo\main.o: E:\keil5\ARM\ARMCC\Bin\..\include\string.h
-servo\main.o: E:\keil5\ARM\ARMCC\Bin\..\include\float.h
-servo\main.o: E:\keil5\ARM\ARMCC\Bin\..\include\limits.h
+servo\main.o: D:\Professional_Software\Keil5_MDK\ARM\ARMCC\Bin\..\include\string.h
+servo\main.o: D:\Professional_Software\Keil5_MDK\ARM\ARMCC\Bin\..\include\float.h
+servo\main.o: D:\Professional_Software\Keil5_MDK\ARM\ARMCC\Bin\..\include\limits.h
 servo\main.o: ../Drivers/USER/PGA117/PGA117.h
-servo\main.o: E:\keil5\Keil\ARM_Compiler\1.7.2\Include\EventRecorder.h
 servo\main.o: ..\Drivers\USER\buezzer\buzzer.h
+servo\main.o: D:\Professional_Software\Keil5_MDK\ARM\ARMCC\Bin\..\include\stdlib.h

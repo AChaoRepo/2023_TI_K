@@ -1,337 +1,186 @@
-#include	"buzzer.h"
+ï»¿#include "buzzer.h"
 #include "tim.h"
 #include "usart.h"
-#include "stdio.h"
-#include "stdarg.h"		//°üº¬ĞèÒªµÄÍ·ÎÄ¼ş 
-#include "string.h"		//°üº¬ĞèÒªµÄÍ·ÎÄ¼ş 
-unsigned char beat;   //µ±Ç°½ÚÅÄË÷Òı
-unsigned char note;   //µ±Ç°½ÚÅÄ¶ÔÓ¦µÄÒô·û
-unsigned int time = 0;      //µ±Ç°½ÚÅÄ¼ÆÊ±
-unsigned int beatTime = 0;  //µ±Ç°½ÚÅÄ×ÜÊ±¼ä
-unsigned int soundTime = 0; //µ±Ç°½ÚÅÄĞè·¢ÉùÊ±¼ä
 
-unsigned char enable = 1;   //·äÃùÆ÷·¢ÉùÊ¹ÄÜ±êÖ¾
-unsigned char tmrflag = 0;  //¶¨Ê±Æ÷ÖĞ¶ÏÍê³É±êÖ¾
+#include <stdio.h>
+#include <stdarg.h>
+#include <string.h>
 
+unsigned char beat = 0;
+unsigned char note = 0;
+unsigned int time = 0;
+unsigned int beatTime = 0;
+unsigned int soundTime = 0;
 
+unsigned char enable = 1;
+unsigned char tmrflag = 0;
+unsigned char Buzzer_play_Enable = 0;
 
-/*Ô­°æÒôµ÷*/
-//unsigned int  NoteFrequ[] = {  //ÖĞÒô1-7ºÍ¸ßÒô1-7¶ÔÓ¦ÆµÂÊÁĞ±í
-//    523,  587,  659,  698,  784,  880,  987,  //ÖĞÒô1-7
-//    1047, 1175, 1319, 1397, 1568, 1760, 1976  //¸ßÒô1-7
-//};
-///*Cµ÷*/
-//unsigned int  NoteFrequ[] = {  //ÖĞÒô1-7ºÍ¸ßÒô1-7¶ÔÓ¦ÆµÂÊÁĞ±í
-//    131, 147, 165, 175, 196, 221, 248,  //µÍÒô1-7
-//    262, 294, 330, 350, 393, 441, 495, //ÖĞÒô1-7
-//		525, 589, 661, 700, 786, 882, 990,		//¸ßÒô1-7
-//};
+double countA = 0;
+unsigned char *pNote = NULL;
+unsigned char *pBeat = NULL;
+unsigned char Note_1 = 0;
+unsigned char _pNote[1] = {0};
+unsigned char _pBeat[1] = {0};
 
-/*Cµ÷µ÷Õû*/
-unsigned int  NoteFrequ[] = {  //ÖĞÒô1-7ºÍ¸ßÒô1-7¶ÔÓ¦ÆµÂÊÁĞ±í
-    262, 294, 330, 350, 393, 441, 495, //ÖĞÒô1-7
-		131, 147, 165, 175, 196, 221, 248,  //µÍÒô1-7
-		525, 589, 661, 700, 786, 882, 990,		//¸ßÒô1-7
+/* C major: middle, low, high */
+static unsigned int NoteFrequ[] = {
+    262, 294, 330, 350, 393, 441, 495,
+    131, 147, 165, 175, 196, 221, 248,
+    525, 589, 661, 700, 786, 882, 990,
 };
 
+static unsigned char TwoTigerNote[] = {
+    1, 2, 3, 1, 1, 2, 3, 1, 3, 4, 5, 3, 4, 5,
+    5, 6, 5, 4, 3, 1, 5, 6, 5, 4, 3, 1, 2, 5, 1, 2, 5, 1,
+};
 
-///*Dµ÷*/
-//unsigned int  NoteFrequ[] = {  //ÖĞÒô1-7ºÍ¸ßÒô1-7¶ÔÓ¦ÆµÂÊÁĞ±í
-//    147, 165, 175, 196, 221, 248, 278,  //µÍÒô1-7
-//    294, 330, 350, 393, 441, 495, 556, //ÖĞÒô1-7
-//		589, 661, 700, 786, 882, 990, 1112,		//¸ßÒô1-7
-//};
+static unsigned char TwoTigerBeat[] = {
+    4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 8, 4, 4, 8,
+    3, 1, 3, 1, 4, 4, 3, 1, 3, 1, 4, 4, 4, 4, 8, 4, 4, 8,
+};
 
-///*Dµ÷µ÷Õû*/
-//unsigned int  NoteFrequ[] = {  //ÖĞÒô1-7ºÍ¸ßÒô1-7¶ÔÓ¦ÆµÂÊÁĞ±í
-//    294, 330, 350, 393, 441, 495, 556, //ÖĞÒô1-7
-//		147, 165, 175, 196, 221, 248, 278,  //µÍÒô1-7
-//		589, 661, 700, 786, 882, 990, 1112,		//¸ßÒô1-7
-//};
+static unsigned char testNote[] = {
+    1, 2, 3, 4, 5, 6, 7,
+    7, 6, 5, 4, 3, 2, 1,
+};
 
-///*Eµ÷*/
-//unsigned int  NoteFrequ[] = {  //ÖĞÒô1-7ºÍ¸ßÒô1-7¶ÔÓ¦ÆµÂÊÁĞ±í
-//    165, 175, 196, 221, 248, 278, 312,  //µÍÒô1-7
-//    330, 350, 393, 441, 495, 556, 624, //¸ßÒô1-7
-//		661, 700, 786, 882, 990, 1112, 1248,		//¸ßÒô1-7
-//};
+static unsigned char testBeat[] = {
+    4, 4, 4, 4, 4, 4, 4,
+    4, 4, 4, 4, 4, 4, 4,
+};
 
-
-
-
-
-unsigned char Buzzer_play_Enable = 0;//3:²¥·ÅÁ½±é£¬±ÈÊµ¼ÊÊıÉÙÒ»±é
-/* Á½Ö»ÀÏ»¢ÀÖÇú²¥·Åº¯Êı */
-    //Á½Ö»ÀÏ»¢Òô·û±í
-unsigned char  TwoTigerNote[] = {
-        1,   2,   3, 1,    1,   2,   3, 1,   3, 4, 5,   3, 4, 5,
-        5,6, 5,4, 3, 1,    5,6, 5,4, 3, 1,   2 ,5, 1,   2, 5, 1,
-    };
-
-    //Á½Ö»ÀÏ»¢½ÚÅÄ±í£¬4±íÊ¾Ò»ÅÄ£¬1¾ÍÊÇ1/4ÅÄ£¬8¾ÍÊÇ2ÅÄ
-unsigned char  TwoTigerBeat[] = {
-        4,   4,   4, 4,    4,   4,   4, 4,   4, 4, 8,   4, 4, 8,
-        3,1, 3,1, 4, 4,    3,1, 3,1, 4, 4,   4, 4, 8,   4, 4, 8,
-    };
-
-//²âÊÔÒô·û
-unsigned char  testNote[] = {
-        1,	2,	3,	4,	5,	6,	7,
-				7,	6,	5,  4,	3,	2,	1,
-    };
-
-//²âÊÔ½ÚÅÄ
-		
-unsigned char  testBeat[] = {
-        4,   4,   4, 4,    4,   4,   4,
-				4,   4,   4, 4,    4,   4,   4,
-    };
-		
-///*Ğ¡ĞÇĞÇ*/
-//const unsigned char  TwoTigerNote[] = {
-//        1,   1,   5, 5,    6,   6,   5,      4, 4, 3, 3,   2, 2, 1,
-//        5,   5,   4, 4,    3,   3,   2,      5, 5, 4, 4,   3, 3, 2,	
-//        1,   1,   5, 5,    6,   6,   5,      4, 4, 3, 3,   2, 2, 1,
-//    };
-//    //Ğ¡ĞÇĞÇ½ÚÅÄ±í£¬4±íÊ¾Ò»ÅÄ£¬1¾ÍÊÇ1/4ÅÄ£¬8¾ÍÊÇ2ÅÄ
-//const unsigned char  TwoTigerBeat[] = {
-//        4,   4,   4, 4,    4,   4,   8,  		 4, 4, 4, 4,   4, 4, 8,
-//        4,   4,   4, 4,    4,   4,   8,  		 4, 4, 4, 4,   4, 4, 8,	
-//        4,   4,   4, 4,    4,   4,   8,  		 4, 4, 4, 4,   4, 4, 8,
-//    };
-
-		
-/////*Æğ´²ºÅ*/
-//unsigned char  TwoTigerNote[] = {
-//        5,     1*3,   3*3,  1*3, 
-//				3*3,   5*3,   5,    1*3,   5,
-//				1*3, 	 3*3,   1*3,  3*3,   5*3,
-//    };
-///*Æğ´²ºÅÒô·û2*/
-//unsigned char  TwoTigerNote[] = {
-//        5,     1,   3,  1, 
-//				3,   5,   5,    1,   5,
-//				1, 	 3,   1,  3,   5,
-
-//    };
-///*Æğ´²ºÅ½ÚÅÄ3*/
-//unsigned char  TwoTigerBeat[] = {
-//        20,     20,   20,  28, 
-//				20,   20,   20,    28,   20,
-//				20, 	20,   28,  20,   20,
-
-//    };
-//  /*Æğ´²ºÅ½ÚÅÄ4*/
-//const unsigned char  TwoTigerBeat[] = {
-//        28,     28,   28,  49, 
-//				28,   28,   28,    49,   28,
-//				28, 	28,   49,  28,   28,
-
-//    };
-
-
-double countA;
-unsigned char *pNote;
-unsigned char *pBeat;	
-unsigned char Note_1;	
-unsigned char _pNote[1],_pBeat[1];
-
-//²¥·ÅÒô·û1~7£¬»òÕß
-//²ÎÊı:   _Note£ºÒô·û   _Beat:½ÚÅÄ _count£º²¥·Å´ÎÊı
-
-void Play_Note(unsigned char _Note, unsigned char _Beat,unsigned char play_count)
+static void PlayTwoTiger(void)
 {
-	if(_Note<=21)//Òô·û¸ßÖĞµÍÒô3*7
-	{
-		_pNote[0] = _Note;
-		_pBeat[0] = _Beat;
-		pNote = &_pNote[0];
-		pBeat = &_pBeat[0];
-		Note_1 = 1;
-		Buzzer_play_Enable =play_count+1;//2£ºÊ¹ÄÜ
-		beat = 0;
-		time = 0;
-	}
-	else
-	{
-		if(_Note == 101)
-		{
-			Note_1 = sizeof(TwoTigerNote);
-			pNote = TwoTigerNote;
-			pBeat = TwoTigerBeat;
-			Buzzer_play_Enable =play_count+1;//2£ºÊ¹ÄÜ
-			beat = 0;
-			time = 0;
-		}
-		if(_Note ==200)
-		{
-			Note_1 = sizeof(testNote);
-			pNote = testNote;
-			pBeat = testBeat;
-			Buzzer_play_Enable =play_count+1;//2£ºÊ¹ÄÜ
-			beat = 0;
-			time = 0;
-		}
-	}
-	HAL_TIM_Base_Start_IT(&htim6);
-}
+    if (Buzzer_play_Enable > 0U) {
+        if (tmrflag == 1U) {
+            tmrflag = 0U;
 
+            if (time == 0U) {
+                note = pNote[beat] - 1U;
+                countA = 200000000.0 / 200.0;
+                countA = countA / (double)(NoteFrequ[note] * 2U);
+                __HAL_TIM_SET_AUTORELOAD(&htim1, (uint16_t)countA - 1U);
 
-
-void PlayTwoTiger(void)
-{
-	if(Buzzer_play_Enable >1)
-	{
-    if(tmrflag == 1)
-		{
-			tmrflag = 0;
-        if (time == 0)  //µ±Ç°½ÚÅÄ²¥ÍêÔòÆô¶¯Ò»¸öĞÂ½ÚÅÄ
-        {
-            note = pNote[beat] - 1;
-						countA = 200000000/200;
-						countA = countA/(double)(NoteFrequ[note]*2);
-//						TIM_SetAutoreload(BASIC_TIM,(uint16_t)countA-1);
-						__HAL_TIM_SET_AUTORELOAD(&htim1, (uint16_t)countA-1);
-//						TIM_SetCounter(BASIC_TIM, (uint16_t)countA-2);
-//						TIM_ITConfig(BASIC_TIM, TIM_IT_Update, DISABLE);/*DISABLE,ENABLEÊ¹ÄÜ¼ÆÊıÆ÷ÖĞ¶Ï*/
-            beatTime = (pBeat[beat] * NoteFrequ[note]) >> 2;
-            soundTime = beatTime - (beatTime >> 2);//¼ÆËã·¢ÉùÊ±¼ä£¬Îª×ÜÊ±¼äµÄ0.75£¬ÒÆÎ»Ô­ÀíÍ¬ÉÏ
-            enable = 1;  //Ö¸Ê¾·äÃùÆ÷¿ªÊ¼·¢Éù
-//						TIM_ITConfig(BASIC_TIM, TIM_IT_Update, ENABLE);/*DISABLE,ENABLEÊ¹ÄÜ¼ÆÊıÆ÷ÖĞ¶Ï*/
-            time++;
-        }
-        else  //µ±Ç°½ÚÅÄÎ´²¥ÍêÔò´¦Àíµ±Ç°½ÚÅÄ
-        {
-						
-            if (time >= beatTime)  //µ±Ç°³ÖĞøÊ±¼äµ½´ï½ÚÅÄ×ÜÊ±¼äÊ±¹éÁã£¬
-            {                      //²¢µİÔö½ÚÅÄË÷Òı£¬ÒÔ×¼±¸Æô¶¯ĞÂ½ÚÅÄ
-                time = 0;
-                beat++;
-//							enable = 0;
-            }
-            else  //µ±Ç°³ÖĞøÊ±¼äÎ´´ïµ½×ÜÊ±¼äÊ±£¬
-            {
-                time++;   //ÀÛ¼ÓÊ±¼ä¼ÆÊı
-                if (time == soundTime)  //µ½´ï·¢ÉùÊ±¼äºó£¬Ö¸Ê¾¹Ø±Õ·äÃùÆ÷£¬
-                {                       //²åÈë0.25*×ÜÊ±¼äµÄ¾²Òô¼ä¸ô£¬
-                    enable = 0;         //ÓÃÒÔÇø·ÖÁ¬ĞøµÄÁ½¸ö½ÚÅÄ
+                beatTime = (pBeat[beat] * NoteFrequ[note]) >> 2;
+                soundTime = beatTime - (beatTime >> 2);
+                enable = 1U;
+                time++;
+            } else {
+                if (time >= beatTime) {
+                    time = 0U;
+                    beat++;
+                } else {
+                    time++;
+                    if (time == soundTime) {
+                        enable = 0U;
+                    }
                 }
             }
+
+            if (beat == Note_1) {
+                beat = 0U;
+                if (Buzzer_play_Enable > 0U) {
+                    Buzzer_play_Enable--;
+                }
+            }
+
+            if (Buzzer_play_Enable == 0U) {
+                BUZZER1(0);
+            }
         }
-				if(beat==Note_1)
-				{
-					
-					beat=0;
-//					enable = 0;
-					Buzzer_play_Enable-=1;
-				}
     }
-	}
-	else
-	{
-		if(Buzzer_play_Enable == 1)//¹Ø±Õ
-		{
-			Buzzer_play_Enable = 0;
-			beat = 0;
-			BUZZER1(0);//¹Ø±Õ·äÃùÆ÷
-			HAL_TIM_Base_Stop_IT(&htim6);
-//			TIM_ITConfig(BASIC_TIM, TIM_IT_Update, DISABLE);/*DISABLE,ENABLEÊ¹ÄÜ¼ÆÊıÆ÷ÖĞ¶Ï*/
-//			delay_ms(200);
-		}
-	}
+}
+
+void Play_Note(unsigned char _Note, unsigned char _Beat, unsigned char play_count)
+{
+    if ((_Note >= 1U) && (_Note <= 21U)) {
+        _pNote[0] = _Note;
+        _pBeat[0] = _Beat;
+        pNote = &_pNote[0];
+        pBeat = &_pBeat[0];
+        Note_1 = 1U;
+    } else if (_Note == 101U) {
+        Note_1 = (unsigned char)sizeof(TwoTigerNote);
+        pNote = TwoTigerNote;
+        pBeat = TwoTigerBeat;
+    } else if (_Note == 200U) {
+        Note_1 = (unsigned char)sizeof(testNote);
+        pNote = testNote;
+        pBeat = testBeat;
+    } else {
+        return;
+    }
+
+    Buzzer_play_Enable = (unsigned char)(play_count + 1U);
+    beat = 0U;
+    time = 0U;
+    enable = 1U;
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-	if(htim == (&htim1))
-	{
-		if(Buzzer_play_Enable != 0)
-		{
-			tmrflag = 1;
-			if(enable){BUZZER1TOGGLE;}  //Ê¹ÄÜÊ±·´×ª·äÃùÆ÷¿ØÖÆµç
-			else{BUZZER1(0);}         //Î´Ê¹ÄÜÊ±¹Ø±Õ·äÃùÆ÷
-			PlayTwoTiger();
-		}
-	}
+    if (htim == (&htim1)) {
+        if (Buzzer_play_Enable != 0U) {
+            tmrflag = 1U;
+            if (enable) {
+                BUZZER1TOGGLE;
+            } else {
+                BUZZER1(0);
+            }
+            PlayTwoTiger();
+        }
+    }
 }
 
+uint8_t UART4_Rx_Buffer = 0U;
 
-//#define UART4_MACRO   5 
-uint8_t UART4_Rx_Buffer;
-//uint8_t UART4_Tx_Buffer[36];
-//uint8_t UART4_len = 0;
+static char HMI_TxBuff[128];
 
+void hmi_printf(char *fmt, ...)
+{
+    unsigned int length;
+    va_list ap;
 
-//UART4_len = 0;
-//HAL_UART_Transmit_IT(&huart4, UART4_Tx_Buffer, uint16_t Size)
+    va_start(ap, fmt);
+    vsnprintf(HMI_TxBuff, sizeof(HMI_TxBuff), fmt, ap);
+    va_end(ap);
 
-__align(8) char HMI_TxBuff[36];//´®¿Ú3»º´æÇø
-
-void hmi_printf(char* fmt,...) 
-{  
-	unsigned int length;
-	
-	va_list ap;
-	
-	//va_list ¿É±ä²ÎÊıÁĞ±í£¬´æ²ÎÊıµØÖ·
-	va_start(ap,fmt);//»ñÈ¡¿É±ä²ÎÊıµØÖ· fmtµØÖ·¸³¸øap
-	
-	vsprintf(HMI_TxBuff,fmt,ap);/*Ê¹ÓÃ²ÎÊıÁĞ±í·¢ËÍ¸ñÊ½»¯Êä³öµ½×Ö·û´®,
-	º¯Êı¹¦ÄÜ½«¿É±ä²ÎÊı¸ñÊ½»¯Êä³öµ½Ò»¸ö×Ö·ûÊı×é
-	*/
-	//fmtÖĞÄÚÈİ¸³¸øUsart3_TxBuff£¬
-	va_end(ap);	//Çå¿Õ²ÎÊıÁĞ±í
-	//
-	length=strlen((const char*)HMI_TxBuff);		
-//	while(RESET == usart_flag_get(HMI_USART,USART_FLAG_TBE)); // µÈ´ı·¢ËÍÊı¾İ»º³åÇø±êÖ¾ÖÃÎ»
-//	for(i = 0;i < length;i ++)
-//	{			
-		HAL_UART_Transmit(&huart4,(uint8_t*)HMI_TxBuff,length,0xffff);
-//		while(RESET == usart_flag_get(HMI_USART,USART_FLAG_TBE)); // µÈ´ı·¢ËÍÊı¾İ»º³åÇø±êÖ¾ÖÃÎ»
-//	}	
+    length = (unsigned int)strlen(HMI_TxBuff);
+    HAL_UART_Transmit(&huart4, (uint8_t *)HMI_TxBuff, (uint16_t)length, 0xFFFF);
 }
 
-extern uint8_t runing_state;
+extern volatile uint8_t runing_state;
 
-char rx_buffer[5];
-int rx_index;
-//´®¿ÚÆÁÖĞ¶Ï»Øµ÷º¯Êı
+static char rx_buffer[5];
+static int rx_index = 0;
+
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-	uint32_t tick;
-	static uint32_t rx_tick = 0;
-	
-	tick = HAL_GetTick();
-	
-	if (tick - rx_tick > 10)
-	{
-		rx_index = 0;
-	}
-	rx_tick = tick;
-	if(huart==&huart4)
-	{
-		if (rx_index >= 5)
-		{
-			 rx_index = 0;
-		}
-		rx_buffer[rx_index++] = UART4_Rx_Buffer;
-		
-		if(rx_index == 5 && rx_buffer[0] == 0X7E && rx_buffer[3]==0XFF && rx_buffer[4]==0XFF)
-		{
-			printf("0X%X",rx_buffer[1]);
-			runing_state = rx_buffer[1];
-		}
-		
-		HAL_UART_Receive_IT(&huart4,&UART4_Rx_Buffer,UART4_MACRO);
-	}
-	
+    uint32_t tick;
+    static uint32_t rx_tick = 0U;
+
+    tick = HAL_GetTick();
+    if ((tick - rx_tick) > 10U) {
+        rx_index = 0;
+    }
+    rx_tick = tick;
+
+    if (huart == &huart4) {
+        if (rx_index >= 5) {
+            rx_index = 0;
+        }
+
+        rx_buffer[rx_index++] = (char)UART4_Rx_Buffer;
+
+        if ((rx_index == 5) &&
+            ((uint8_t)rx_buffer[0] == 0x7E) &&
+            ((uint8_t)rx_buffer[3] == 0xFF) &&
+            ((uint8_t)rx_buffer[4] == 0xFF)) {
+            runing_state = (uint8_t)rx_buffer[1];
+        }
+
+        HAL_UART_Receive_IT(&huart4, &UART4_Rx_Buffer, UART4_MACRO);
+    }
 }
 
-
-
-
-
-
-
-
-/*********************************************END OF FILE**********************/

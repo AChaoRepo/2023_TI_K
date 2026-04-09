@@ -6,7 +6,7 @@ servo\stm32h7xx_hal_i2c.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_def
 servo\stm32h7xx_hal_i2c.o: ../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h7xx.h
 servo\stm32h7xx_hal_i2c.o: ../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h743xx.h
 servo\stm32h7xx_hal_i2c.o: ../Drivers/CMSIS/Include/core_cm7.h
-servo\stm32h7xx_hal_i2c.o: E:\keil5\ARM\ARMCC\Bin\..\include\stdint.h
+servo\stm32h7xx_hal_i2c.o: D:\Professional_Software\Keil5_MDK\ARM\ARMCC\Bin\..\include\stdint.h
 servo\stm32h7xx_hal_i2c.o: ../Drivers/CMSIS/Include/cmsis_version.h
 servo\stm32h7xx_hal_i2c.o: ../Drivers/CMSIS/Include/cmsis_compiler.h
 servo\stm32h7xx_hal_i2c.o: ../Drivers/CMSIS/Include/cmsis_armcc.h
@@ -14,8 +14,8 @@ servo\stm32h7xx_hal_i2c.o: ../Drivers/CMSIS/Include/mpu_armv7.h
 servo\stm32h7xx_hal_i2c.o: ../Drivers/CMSIS/Device/ST/STM32H7xx/Include/system_stm32h7xx.h
 servo\stm32h7xx_hal_i2c.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h
 servo\stm32h7xx_hal_i2c.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h
-servo\stm32h7xx_hal_i2c.o: E:\keil5\ARM\ARMCC\Bin\..\include\stddef.h
-servo\stm32h7xx_hal_i2c.o: E:\keil5\ARM\ARMCC\Bin\..\include\math.h
+servo\stm32h7xx_hal_i2c.o: D:\Professional_Software\Keil5_MDK\ARM\ARMCC\Bin\..\include\stddef.h
+servo\stm32h7xx_hal_i2c.o: D:\Professional_Software\Keil5_MDK\ARM\ARMCC\Bin\..\include\math.h
 servo\stm32h7xx_hal_i2c.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc_ex.h
 servo\stm32h7xx_hal_i2c.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_gpio.h
 servo\stm32h7xx_hal_i2c.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_gpio_ex.h

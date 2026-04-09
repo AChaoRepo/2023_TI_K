@@ -1,16 +1,11 @@
-#ifndef __MIC_ADC_H_
+ï»¿#ifndef __MIC_ADC_H_
 #define __MIC_ADC_H_
 
 #include "stm32h7xx_hal.h"
 
-//#define start_value   0 //Æô¶¯DMA²É¼¯µÄãĞÖµ
-#define MAX_FFT_N		1024 //²É¼¯µÄÊı¾İµãÊı //ÔÚFFTInc.hÖĞÒ²´æÔÚ´Ëºê¶¨Òå ,main.cÖĞÒ²´æÔÚ´Ëºê¶¨Òå
+#define MAX_FFT_N 1024U
 
-extern uint8_t   start_fft_flag; 
-extern uint16_t  adc2_value;
-extern uint16_t adc_value_buffer[MAX_FFT_N];
+extern volatile uint8_t start_fft_flag;
+extern volatile uint16_t adc_value_buffer[MAX_FFT_N];
+
 #endif
-
-
-
-

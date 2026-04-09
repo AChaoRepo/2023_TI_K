@@ -1,205 +1,123 @@
-#include "fft_user.h"
-#include "arm_const_structs.h"
-#include "FFTInc.h"	
-#include "main.h"
-#include "stdio.h"
-#include "EventRecorder.h" 
- #include "mic_adc.h"
-struct  compx s[10240];
+ï»¿#include "fft_user.h"
+#include "FFTInc.h"
+#include "mic_adc.h"
 
-////¸´ÊýÇó³ö·ùÖµ
-//float Absolute_abs_Value_(complex a)
-//{
-//   	float i,j;
-//   	float value;
-//   	i=a.real*a.real;
-//   	j=a.img*a.img;
-//   	value=i+j;
-//   	return value;
-//}
+#include <math.h>
 
-/*
-*********************************************************************************************************
-*	º¯ Êý Ãû: PowerPhaseRadians_f32
-*	¹¦ÄÜËµÃ÷: ÇóÏàÎ»
-*	ÐÎ    ²Î£º_usFFTPoints  ¸´Êý¸öÊý£¬Ã¿¸ö¸´ÊýÊÇÁ½¸öfloat32_tÊýÖµ
-*             _uiCmpValue  ±È½ÏÖµ£¬ÐèÒªÇó³öÏàÎ»µÄÊýÖµ
-*	·µ »Ø Öµ: ÎÞ
-*********************************************************************************************************
-*/
-void PowerPhaseRadians_f32(uint16_t _usFFTPoints, float32_t _uiCmpValue)		
+struct compx s[10240];
+
+static float tem1[MAX_FFT_N];
+static uint16_t peak[(MAX_FFT_N / 2) / (7 / 2 - 1)];
+static float fft_value[MAX_FFT_N / 2];
+
+void PowerPhaseRadians_f32(uint16_t fft_points, float32_t threshold)
 {
-	float32_t lX, lY;
-	uint32_t i;
-	float32_t phase;
-	float32_t mag;
-	
-	
-	for (i=0; i <_usFFTPoints; i++)
-	{
-		lX= s[i].real; 	  /* Êµ²¿ */
-		lY= s[i].imag;    /* Ðé²¿ */ 
-		
- 		phase = atan2f(lY, lX);    		  				 /* atan2Çó½âµÄ½á¹û·¶Î§ÊÇ(-pi, pi], »¡¶ÈÖÆ */
-		arm_sqrt_f32((float32_t)(lX*lX+ lY*lY), &mag);   /* ÇóÄ£ */
-		
-		if(_uiCmpValue > mag)
-		{
-			s[i].real = 0;			
-		}
-		else
-		{
-			s[i].real= phase* 180.0f/3.1415926f;   /* ½«Çó½âµÄ½á¹ûÓÉ»¡¶È×ª»»Îª½Ç¶È */
-		}
-	}
+    uint32_t i;
+
+    for (i = 0; i < fft_points; i++) {
+        float32_t lX = s[i].real;
+        float32_t lY = s[i].imag;
+        float32_t phase = atan2f(lY, lX);
+        float32_t mag = 0.0f;
+
+        arm_sqrt_f32((float32_t)(lX * lX + lY * lY), &mag);
+        s[i].real = (threshold > mag) ? 0.0f : (phase * 180.0f / 3.1415926f);
+    }
 }
 
-float tem1[MAX_FFT_N];
-void find_peaks_max(float *src, uint32_t src_lenth, uint32_t distance, uint16_t *ind_max, uint32_t max_len, uint32_t *ind_max_len)
+static void find_peaks_max(float *src,
+                           uint32_t src_len,
+                           uint32_t distance,
+                           uint16_t *ind_max,
+                           uint32_t max_len,
+                           uint32_t *ind_max_len)
 {
     uint32_t i, j;
     int32_t diff;
 
-    tem1[0] = ind_max[0] = 0;
+    tem1[0] = 0;
+    ind_max[0] = 0;
 
-    for (j = 1, i = 2 + distance; i < src_lenth - distance; i++)
-    {
-        diff = src[i] - src[i - 1];
-        if (diff > 0)
+    for (j = 1, i = 2 + distance; i < src_len - distance; i++) {
+        diff = (int32_t)src[i] - (int32_t)src[i - 1];
+        if (diff > 0) {
             tem1[i - 1] = 1;
-        else if (diff < 0) 
+        } else if (diff < 0) {
             tem1[i - 1] = -1;
-        else                
+        } else {
             tem1[i - 1] = 0;
+        }
 
-        diff = tem1[i - 1] - tem1[i - 2];
-        if (diff < 0 && j < max_len)
-        {          
-            if (ind_max[j - 1] + distance < i)  
-            {                
-                ind_max[j++] = i - 1;
-            }                    
+        diff = (int32_t)tem1[i - 1] - (int32_t)tem1[i - 2];
+        if ((diff < 0) && (j < max_len)) {
+            if ((uint32_t)ind_max[j - 1] + distance < i) {
+                ind_max[j++] = (uint16_t)(i - 1);
+            }
         }
     }
+
     *ind_max_len = j;
 }
 
-#define PEAK_SIZE             7 
-#define HALF_PEAK_SIZE       (PEAK_SIZE / 2 - 1) 
-#define MAX_PEAK             (MAX_FFT_N / 2 / HALF_PEAK_SIZE)
-#define PEAK_THS             1000000
-static uint16_t peak[MAX_PEAK];
-float fft_value[MAX_FFT_N / 2];
-/*
-*********************************************************************************************************
-*	º¯ Êý Ãû: cfft_f32_mag
-*	¹¦ÄÜËµÃ÷: ¼ÆËã·ùÆµ
-*	ÐÎ    ²Î£ºÎÞ
-*	·µ »Ø Öµ: ÎÞ
-*********************************************************************************************************
-*/
- int cfft_f32_mag(void)
+#define PEAK_SIZE 7
+#define HALF_PEAK_SIZE (PEAK_SIZE / 2 - 1)
+#define MAX_PEAK (MAX_FFT_N / 2 / HALF_PEAK_SIZE)
+#define PEAK_THS 1000000
+
+int cfft_f32_mag(void)
 {
-	uint32_t i, j, peak_nb;
-	float32_t Max_mag=0;
-	uint32_t Max_mag_index=0; 
-	/* ¼ÆËãÒ»Åúsin£¬cosÏµÊý */
+    uint32_t i, j, peak_nb;
+
 #if (MAX_FFT_N != 8192) && (MAX_FFT_N != 16384)
-	InitTableFFT(MAX_FFT_N);
+    InitTableFFT(MAX_FFT_N);
 #endif
-	
-	for(i=0; i<MAX_FFT_N; i++)
-	{
-		/* ²¨ÐÎÊÇÓÉÖ±Á÷·ÖÁ¿£¬500HzÕýÏÒ²¨×é³É£¬²¨ÐÎ²ÉÑùÂÊMAX_FFT_N£¬³õÊ¼ÏàÎ»60¡ã */
-		//s[i].real = 1 + cos(2*3.1415926f*500*i/MAX_FFT_N + 3.1415926f/3);		
-		//s[i].imag = 0;
-		 s[i].real =  adc_value_buffer[i];//1 + cos(2*3.1415926f*500*i/MAX_FFT_N + 3.1415926f/3);		
-		 s[i].imag = 0;
-		
-	}
-	
-	/* MAX_FFT_Nµã¿ìËÙFFT */ 
-	cfft(s, MAX_FFT_N);
-	
-	for (i = 0; i < 80; i++)
-	{
-		fft_value[i] = 0;
-	}
-	/* ¼ÆËã·ùÆµ */ 
-	for(i=80; i<MAX_FFT_N/2; i++)
-	{
-		arm_sqrt_f32((float32_t)(s[i].real *s[i].real+ s[i].imag*s[i].imag ), &fft_value[i]); 			
-		//printf("%f\n",s[i].real);
-	}
 
-	find_peaks_max(fft_value, MAX_FFT_N / 2, HALF_PEAK_SIZE, peak, MAX_PEAK, &peak_nb); 
-	for (i = j = 0; i < peak_nb; i++)
-	{
-			if (fft_value[peak[i]] > PEAK_THS)
-			{
-					peak[j++] = peak[i];
-			}
-			if(Max_mag<fft_value[peak[i]])
-		  {
-			    Max_mag=fft_value[peak[i]];
-			    Max_mag_index=peak[i];
-		  }
-	}
-	peak_nb = j;
-//	for (i = 0; i < peak_nb; i++)
-//	{
-//			printf("index %d, %f\n",peak[i],fft_value[peak[i]]);
-//	}
-//	printf("Max_mag=%f,Max_mag_index=%d \n",fft_value[Max_mag_index],Max_mag_index);
+    for (i = 0; i < MAX_FFT_N; i++) {
+        s[i].real = (float32_t)adc_value_buffer[i];
+        s[i].imag = 0.0f;
+    }
 
-  if (peak_nb)
-	{
-		if (peak[0] > 90 && peak[0] < 140)
-		{
-			return peak[0];
-		}
-	}
+    cfft(s, MAX_FFT_N);
 
-	return 0;
+    for (i = 0; i < 80; i++) {
+        fft_value[i] = 0.0f;
+    }
+
+    for (i = 80; i < MAX_FFT_N / 2; i++) {
+        arm_sqrt_f32((float32_t)(s[i].real * s[i].real + s[i].imag * s[i].imag), &fft_value[i]);
+    }
+
+    find_peaks_max(fft_value, MAX_FFT_N / 2, HALF_PEAK_SIZE, peak, MAX_PEAK, &peak_nb);
+
+    for (i = j = 0; i < peak_nb; i++) {
+        if (fft_value[peak[i]] > PEAK_THS) {
+            peak[j++] = peak[i];
+        }
+    }
+    peak_nb = j;
+
+    if (peak_nb > 0U) {
+        if ((peak[0] > 90U) && (peak[0] < 140U)) {
+            return (int)peak[0];
+        }
+    }
+
+    return 0;
 }
 
-
-/*
-*********************************************************************************************************
-*	º¯ Êý Ãû: cfft_f32_phase
-*	¹¦ÄÜËµÃ÷: ¼ÆËãÏàÆµ
-*	ÐÎ    ²Î£ºÎÞ
-*	·µ »Ø Öµ: ÎÞ
-*********************************************************************************************************
-*/
- void cfft_f32_phase(void)
+void cfft_f32_phase(void)
 {
-	uint32_t i;
-	
+    uint32_t i;
 
-	/* ¼ÆËãÒ»Åúsin£¬cosÏµÊý */
 #if (MAX_FFT_N != 8192) && (MAX_FFT_N != 16384)
-	InitTableFFT(MAX_FFT_N);
+    InitTableFFT(MAX_FFT_N);
 #endif
-	
-	for(i=0; i<MAX_FFT_N; i++)
-	{
-		/* ²¨ÐÎÊÇÓÉÖ±Á÷·ÖÁ¿£¬500HzÕýÏÒ²¨×é³É£¬²¨ÐÎ²ÉÑùÂÊMAX_FFT_N£¬³õÊ¼ÏàÎ»60¡ã */
-		s[i].real = 1 + cos(2*3.1415926f*500*i/MAX_FFT_N + 3.1415926f/3);		
-		s[i].imag = 0;
-	}
-	
-	/* MAX_FFT_Nµã¿ìËÙFFT */ 
-	cfft(s, MAX_FFT_N);
-	
-	/* ÇóÏàÆµ */
-	PowerPhaseRadians_f32(MAX_FFT_N, 0.5f);
-	
-	/* ´®¿Ú´òÓ¡Çó½âÏàÆµ */
-	for(i=0; i<MAX_FFT_N; i++)
-	{
-		//printf("%f\r\n", s[i].real);
-	}
-	
-}
 
+    for (i = 0; i < MAX_FFT_N; i++) {
+        s[i].real = 1.0f + cosf(2.0f * 3.1415926f * 500.0f * (float)i / (float)MAX_FFT_N + 3.1415926f / 3.0f);
+        s[i].imag = 0.0f;
+    }
+
+    cfft(s, MAX_FFT_N);
+    PowerPhaseRadians_f32(MAX_FFT_N, 0.5f);
+}

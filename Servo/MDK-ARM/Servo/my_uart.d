@@ -8,7 +8,7 @@ servo\my_uart.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_def.h
 servo\my_uart.o: ../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h7xx.h
 servo\my_uart.o: ../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h743xx.h
 servo\my_uart.o: ../Drivers/CMSIS/Include/core_cm7.h
-servo\my_uart.o: E:\keil5\ARM\ARMCC\Bin\..\include\stdint.h
+servo\my_uart.o: D:\Professional_Software\Keil5_MDK\ARM\ARMCC\Bin\..\include\stdint.h
 servo\my_uart.o: ../Drivers/CMSIS/Include/cmsis_version.h
 servo\my_uart.o: ../Drivers/CMSIS/Include/cmsis_compiler.h
 servo\my_uart.o: ../Drivers/CMSIS/Include/cmsis_armcc.h
@@ -16,8 +16,8 @@ servo\my_uart.o: ../Drivers/CMSIS/Include/mpu_armv7.h
 servo\my_uart.o: ../Drivers/CMSIS/Device/ST/STM32H7xx/Include/system_stm32h7xx.h
 servo\my_uart.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h
 servo\my_uart.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h
-servo\my_uart.o: E:\keil5\ARM\ARMCC\Bin\..\include\stddef.h
-servo\my_uart.o: E:\keil5\ARM\ARMCC\Bin\..\include\math.h
+servo\my_uart.o: D:\Professional_Software\Keil5_MDK\ARM\ARMCC\Bin\..\include\stddef.h
+servo\my_uart.o: D:\Professional_Software\Keil5_MDK\ARM\ARMCC\Bin\..\include\math.h
 servo\my_uart.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc_ex.h
 servo\my_uart.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_gpio.h
 servo\my_uart.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_gpio_ex.h
@@ -43,5 +43,4 @@ servo\my_uart.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim_ex.h
 servo\my_uart.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h
 servo\my_uart.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h
 servo\my_uart.o: ../Core/Inc/usart.h
-servo\my_uart.o: E:\keil5\ARM\ARMCC\Bin\..\include\stdio.h
-servo\my_uart.o: E:\keil5\ARM\ARMCC\Bin\..\include\string.h
+servo\my_uart.o: D:\Professional_Software\Keil5_MDK\ARM\ARMCC\Bin\..\include\stdio.h

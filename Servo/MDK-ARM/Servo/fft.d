@@ -1,13 +1,13 @@
 servo\fft.o: ..\Drivers\USER\fft\fft.c
 servo\fft.o: ..\Drivers\USER\fft\FFTInc.h
-servo\fft.o: E:\keil5\ARM\ARMCC\Bin\..\include\math.h
+servo\fft.o: D:\Professional_Software\Keil5_MDK\ARM\ARMCC\Bin\..\include\math.h
 servo\fft.o: ../Drivers/USER/DSP/Include/arm_math.h
 servo\fft.o: ../Drivers/USER/DSP/Include/cmsis_compiler.h
-servo\fft.o: E:\keil5\ARM\ARMCC\Bin\..\include\stdint.h
+servo\fft.o: D:\Professional_Software\Keil5_MDK\ARM\ARMCC\Bin\..\include\stdint.h
 servo\fft.o: ../Drivers/USER/DSP/Include/cmsis_armcc.h
-servo\fft.o: E:\keil5\ARM\ARMCC\Bin\..\include\string.h
-servo\fft.o: E:\keil5\ARM\ARMCC\Bin\..\include\float.h
-servo\fft.o: E:\keil5\ARM\ARMCC\Bin\..\include\limits.h
+servo\fft.o: D:\Professional_Software\Keil5_MDK\ARM\ARMCC\Bin\..\include\string.h
+servo\fft.o: D:\Professional_Software\Keil5_MDK\ARM\ARMCC\Bin\..\include\float.h
+servo\fft.o: D:\Professional_Software\Keil5_MDK\ARM\ARMCC\Bin\..\include\limits.h
 servo\fft.o: ../Drivers/USER/ADC/mic_adc.h
 servo\fft.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h
 servo\fft.o: ../Core/Inc/stm32h7xx_hal_conf.h
@@ -22,7 +22,7 @@ servo\fft.o: ../Drivers/CMSIS/Include/mpu_armv7.h
 servo\fft.o: ../Drivers/CMSIS/Device/ST/STM32H7xx/Include/system_stm32h7xx.h
 servo\fft.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h
 servo\fft.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h
-servo\fft.o: E:\keil5\ARM\ARMCC\Bin\..\include\stddef.h
+servo\fft.o: D:\Professional_Software\Keil5_MDK\ARM\ARMCC\Bin\..\include\stddef.h
 servo\fft.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc_ex.h
 servo\fft.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_gpio.h
 servo\fft.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_gpio_ex.h
