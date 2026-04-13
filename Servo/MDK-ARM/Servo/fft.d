@@ -14,6 +14,7 @@ servo\fft.o: ../Core/Inc/stm32h7xx_hal_conf.h
 servo\fft.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc.h
 servo\fft.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_def.h
 servo\fft.o: ../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h7xx.h
+servo\fft.o: ../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h750xx.h
 servo\fft.o: ../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h743xx.h
 servo\fft.o: ../Drivers/CMSIS/Include/core_cm7.h
 servo\fft.o: ../Drivers/CMSIS/Include/cmsis_version.h

@@ -33,18 +33,20 @@
 
 #include <stdlib.h>
 
+#define PGA117_SELF_TEST_ENABLE 0U
+
 typedef enum run_state_e {
     STATE_IDLE = 0,
-    STATE_LERN_1,
-    STATE_LERN_2,
-    STATE_LERN_3,
-    STATE_LERN_4,
-    STATE_LERN_5,
-    STATE_PLAY,
-    STATE_LESSON1_TEST,
-    STATE_LESSON2_TEST,
-    STATE_LESSON3_TEST,
-    STATE_LESSON4_TEST = 0x10,
+    STATE_LERN_1,          /* Learn cup #1 */
+    STATE_LERN_2,          /* Learn cup #2 */
+    STATE_LERN_3,          /* Learn cup #3 */
+    STATE_LERN_4,          /* Learn cup #4 */
+    STATE_LERN_5,          /* Learn cup #5 */
+    STATE_PLAY,            /* One-key auto play */
+    STATE_LESSON1_TEST,    /* Basic recognition test */
+    STATE_LESSON2_TEST,    /* Recognition + pitch output */
+    STATE_LESSON3_TEST,    /* 5-cup play mode */
+    STATE_LESSON4_TEST = 0x10, /* 8-cup mode, unknown cup => 0 */
 } run_state_t;
 
 volatile uint8_t runing_state = STATE_IDLE;
@@ -53,28 +55,50 @@ volatile uint8_t runing_state = STATE_IDLE;
 void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
+#if !PGA117_SELF_TEST_ENABLE
 static int match_position_index(int freq, const int *position, int length)
 {
     int i;
+    int best_index = 0;
+    int best_diff = 0x7FFFFFFF;
 
     for (i = 0; i < length; i++) {
+        int delta;
+        int tolerance;
+
         if (position[i] <= 0) {
             continue;
         }
 
-        if (freq >= 130) {
-            if (position[i] == freq) {
-                return i + 1;
-            }
-        } else {
-            if (abs(position[i] - freq) <= 1) {
-                return i + 1;
-            }
+        delta = abs(position[i] - freq);
+        tolerance = (position[i] >= 130) ? 4 : 2;
+
+        if ((delta <= tolerance) && (delta < best_diff)) {
+            best_diff = delta;
+            best_index = i + 1;
         }
     }
 
-    return 0;
+    return best_index;
 }
+#endif
+
+#if PGA117_SELF_TEST_ENABLE
+static void pga117_self_test_step(void)
+{
+    static const uint32_t gains[] = {1U, 2U, 5U, 10U, 20U, 50U};
+    static uint32_t index = 0U;
+
+    pga117_config(1U, gains[index]);
+    HAL_GPIO_TogglePin(PRONUNCIATION_LED_GPIO_Port, PRONUNCIATION_LED_Pin);
+    HAL_Delay(1000U);
+
+    index++;
+    if (index >= (sizeof(gains) / sizeof(gains[0]))) {
+        index = 0U;
+    }
+}
+#endif
 
 /**
   * @brief  The application entry point.
@@ -82,12 +106,14 @@ static int match_position_index(int freq, const int *position, int length)
   */
 int main(void)
 {
+#if !PGA117_SELF_TEST_ENABLE
     int result = 0;
     int i;
     int freq = 0;
     int freq_update = 0;
     uint32_t last_freq_tick = 0;
     int position[5] = {0};
+#endif
 
     /* Enable I-Cache---------------------------------------------------------*/
     SCB_EnableICache();
@@ -112,7 +138,7 @@ int main(void)
     MX_ADC1_Init();
 
     delay_init(400);
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_0, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(SPI1CS_GPIO_Port, SPI1CS_Pin, GPIO_PIN_SET);
     delay_ms(100);
     pa117_init();
     delay_ms(300);
@@ -122,6 +148,16 @@ int main(void)
     HAL_UART_Receive_IT(&huart4, &UART4_Rx_Buffer, UART4_MACRO);
 
     while (1) {
+#if PGA117_SELF_TEST_ENABLE
+        pga117_self_test_step();
+        continue;
+#else
+        if (runing_state == STATE_PLAY) {
+            /* Handle one-key play immediately, independent from FFT cycle. */
+            Play_Note(101, 4, 1);
+            runing_state = STATE_IDLE;
+        }
+
         if (start_fft_flag == 1U) {
             start_fft_flag = 0U;
             freq_update = 0;
@@ -143,11 +179,6 @@ int main(void)
                               freq_update ? GPIO_PIN_SET : GPIO_PIN_RESET);
 
             switch (runing_state) {
-            case STATE_PLAY:
-                Play_Note(101, 4, 1);
-                runing_state = STATE_IDLE;
-                break;
-
             case STATE_LERN_1:
             case STATE_LERN_2:
             case STATE_LERN_3:
@@ -192,6 +223,7 @@ int main(void)
 
             HAL_ADC_Start_DMA(&hadc1, (uint32_t *)adc_value_buffer, MAX_FFT_N);
         }
+#endif
     }
 }
 

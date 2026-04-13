@@ -32,10 +32,10 @@ void pa117_sdn_dis(void)
 	//data1[0]=0xe1;
 //	data1[1]=0x00;
 	
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_0, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(SPI1CS_GPIO_Port, SPI1CS_Pin, GPIO_PIN_RESET);
 	HAL_SPI_Transmit(&hspi3,(uint8_t *)&data,1,10);
 	//HAL_SPI_Transmit(&hspi3,data1,2,50);
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_0, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(SPI1CS_GPIO_Port, SPI1CS_Pin, GPIO_PIN_SET);
 	delay_ms(100);
 	
 //	HAL_GPIO_WritePin(SPI3CS_GPIO_Port, SPI3CS_Pin, GPIO_PIN_SET);
@@ -100,10 +100,10 @@ void pga117_config(uint32_t ch, uint32_t ga)
 	}
 	//data1[0]=0x2a;
 	//data1[1]=0x00;
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_0, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(SPI1CS_GPIO_Port, SPI1CS_Pin, GPIO_PIN_RESET);
 	//HAL_SPI_Transmit(&hspi3,data1,2,100);
 	HAL_SPI_Transmit(&hspi3,(uint8_t *)&data,1,10);
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_0, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(SPI1CS_GPIO_Port, SPI1CS_Pin, GPIO_PIN_SET);
 	delay_ms(100);
 	
 //	rt_pin_write(SPI_NSS_PIN1, PIN_LOW);
@@ -126,9 +126,9 @@ void pga117_config(uint32_t ch, uint32_t ga)
 uint16_t get_pga117_config(void)
 {
 	uint16_t data = 0x6a00;
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_0, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(SPI1CS_GPIO_Port, SPI1CS_Pin, GPIO_PIN_RESET);
 	HAL_SPI_Transmit(&hspi3,(uint8_t *)&data,1,10);
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_0, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(SPI1CS_GPIO_Port, SPI1CS_Pin, GPIO_PIN_SET);
 	delay_ms(100);
 	
 	

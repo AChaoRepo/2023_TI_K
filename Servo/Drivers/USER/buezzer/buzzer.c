@@ -112,7 +112,8 @@ void Play_Note(unsigned char _Note, unsigned char _Beat, unsigned char play_coun
         return;
     }
 
-    Buzzer_play_Enable = (unsigned char)(play_count + 1U);
+    /* play_count represents real repeat count (1 = play once). */
+    Buzzer_play_Enable = (play_count == 0U) ? 1U : play_count;
     beat = 0U;
     time = 0U;
     enable = 1U;
@@ -152,32 +153,37 @@ void hmi_printf(char *fmt, ...)
 
 extern volatile uint8_t runing_state;
 
-static char rx_buffer[5];
-static int rx_index = 0;
+static uint8_t rx_frame[5];
+static uint8_t rx_len = 0U;
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
+    uint8_t byte;
     uint32_t tick;
     static uint32_t rx_tick = 0U;
 
     tick = HAL_GetTick();
     if ((tick - rx_tick) > 10U) {
-        rx_index = 0;
+        rx_len = 0U;
     }
     rx_tick = tick;
 
     if (huart == &huart4) {
-        if (rx_index >= 5) {
-            rx_index = 0;
+        byte = UART4_Rx_Buffer;
+
+        if (rx_len < 5U) {
+            rx_frame[rx_len++] = byte;
+        } else {
+            memmove(&rx_frame[0], &rx_frame[1], 4U);
+            rx_frame[4] = byte;
         }
 
-        rx_buffer[rx_index++] = (char)UART4_Rx_Buffer;
-
-        if ((rx_index == 5) &&
-            ((uint8_t)rx_buffer[0] == 0x7E) &&
-            ((uint8_t)rx_buffer[3] == 0xFF) &&
-            ((uint8_t)rx_buffer[4] == 0xFF)) {
-            runing_state = (uint8_t)rx_buffer[1];
+        if ((rx_len >= 5U) &&
+            (rx_frame[0] == 0x7EU) &&
+            (rx_frame[3] == 0xFFU) &&
+            (rx_frame[4] == 0xFFU)) {
+            runing_state = rx_frame[1];
+            rx_len = 0U;
         }
 
         HAL_UART_Receive_IT(&huart4, &UART4_Rx_Buffer, UART4_MACRO);

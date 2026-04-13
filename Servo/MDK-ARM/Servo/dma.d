@@ -6,6 +6,7 @@ servo\dma.o: ../Core/Inc/stm32h7xx_hal_conf.h
 servo\dma.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc.h
 servo\dma.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_def.h
 servo\dma.o: ../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h7xx.h
+servo\dma.o: ../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h750xx.h
 servo\dma.o: ../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h743xx.h
 servo\dma.o: ../Drivers/CMSIS/Include/core_cm7.h
 servo\dma.o: D:\Professional_Software\Keil5_MDK\ARM\ARMCC\Bin\..\include\stdint.h

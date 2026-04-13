@@ -1,5 +1,6 @@
 servo\eventrecorder.o: D:/Professional_Software/Keil5_MDK/Packs/Keil/ARM_Compiler/1.7.2/Source/EventRecorder.c
 servo\eventrecorder.o: .\RTE\_Servo\RTE_Components.h
+servo\eventrecorder.o: ../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h750xx.h
 servo\eventrecorder.o: ../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h743xx.h
 servo\eventrecorder.o: ../Drivers/CMSIS/Include/core_cm7.h
 servo\eventrecorder.o: D:\Professional_Software\Keil5_MDK\ARM\ARMCC\Bin\..\include\stdint.h

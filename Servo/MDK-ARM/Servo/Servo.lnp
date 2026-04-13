@@ -1,5 +1,5 @@
 --cpu Cortex-M7.fp.dp
-"servo\startup_stm32h743xx.o"
+"servo\startup_stm32h750xx.o"
 "servo\main.o"
 "servo\gpio.o"
 "servo\adc.o"

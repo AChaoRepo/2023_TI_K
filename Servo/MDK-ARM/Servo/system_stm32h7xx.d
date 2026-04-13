@@ -1,5 +1,6 @@
 servo\system_stm32h7xx.o: ../Core/Src/system_stm32h7xx.c
 servo\system_stm32h7xx.o: ../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h7xx.h
+servo\system_stm32h7xx.o: ../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h750xx.h
 servo\system_stm32h7xx.o: ../Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h743xx.h
 servo\system_stm32h7xx.o: ../Drivers/CMSIS/Include/core_cm7.h
 servo\system_stm32h7xx.o: D:\Professional_Software\Keil5_MDK\ARM\ARMCC\Bin\..\include\stdint.h

@@ -63,19 +63,15 @@ void Error_Handler(void);
 #define TDC1000_EN_GPIO_Port GPIOC
 #define TDC1000_RESET_Pin GPIO_PIN_5
 #define TDC1000_RESET_GPIO_Port GPIOC
-#define PWM1_BIN1_Pin GPIO_PIN_12
-#define PWM1_BIN1_GPIO_Port GPIOE
-#define TDC7200_INT_Pin GPIO_PIN_1
-#define TDC7200_INT_GPIO_Port GPIOD
 #define TDC7200_EN_Pin GPIO_PIN_3
 #define TDC7200_EN_GPIO_Port GPIOD
 
-#define BUZZER_Pin GPIO_PIN_15
-#define BUZZER_GPIO_Port GPIOE
+#define BUZZER_Pin GPIO_PIN_14
+#define BUZZER_GPIO_Port GPIOB
 
 // ∞“ÙLED
-#define PRONUNCIATION_LED_Pin GPIO_PIN_14
-#define PRONUNCIATION_LED_GPIO_Port GPIOE
+#define PRONUNCIATION_LED_Pin GPIO_PIN_15
+#define PRONUNCIATION_LED_GPIO_Port GPIOB
 
 ////Pronunciation
 //PRONUNCIATION
@@ -90,3 +86,5 @@ extern uint8_t UART4_Tx_Buffer[36];
 #endif
 
 #endif /* __MAIN_H */
+
+
